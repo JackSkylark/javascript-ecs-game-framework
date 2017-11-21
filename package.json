@@ -1,0 +1,17 @@
+{
+    "name": "mario-clone",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "webpack --config webpack.config.ts"
+    },
+    "devDependencies": {
+        "@types/webpack": "3.8.1",
+        "typescript": "2.6.1",
+        "ts-node": "3.3.0",
+        "ts-loader": "3.1.1",
+        "webpack": "3.8.1"
+    },
+    "dependencies": {
+
+    }
+}
