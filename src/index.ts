@@ -7,7 +7,11 @@ import {
     Aspect
 } from "~/entity-component";
 
-const cursorSystemAspect = new Aspect().all(Components.PositionComponent);
+class CursorComponent extends Component {
+	
+}
+
+const cursorSystemAspect = new Aspect().all(Components.PositionComponent, Components.BoxComponent, CursorComponent);
 class CursorSystem extends System {
     private _input: InputManager;
 
@@ -32,11 +36,16 @@ class CursorSystem extends System {
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const game = new Engine(canvas);
 const cursorEntity = new Entity("cursor", [
+	new CursorComponent,
     new Components.PositionComponent(0, 0),
     new Components.BoxComponent(20)
 ]);
+const boxEntity = new Entity("box1", [
+	new Components.PositionComponent(250, 500),
+    new Components.BoxComponent(50)
+]);
 const cursorSystem = new CursorSystem(game.input);
-const gameScene = new Scene().addEntities([cursorEntity]).addSystems([cursorSystem]);
+const gameScene = new Scene().addEntities([cursorEntity, boxEntity]).addSystems([cursorSystem]);
 
 game.setScene(gameScene);
 game.start();
