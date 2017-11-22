@@ -1,48 +1,60 @@
 import { Component } from "./Component";
-type Ctor<T> = {new (...args: any[]):T};
+import { Guid } from "~/utilities";
+
+type Ctor<T> = { new(...args: any[]): T };
 
 class Entity {
     private readonly _id: string;
-    private readonly _components: Component[];
-
-    constructor(id: string, components?: Component[]) {
-        this._id = id;
-        this._components = [];
-
-        this.addComponents(components);
+    private readonly _components: { [id: string]: Component } = {};
+    private readonly _name: string;
+    
+    constructor(name?: string) {
+        this._id = Guid.createGuid();
+        this._name = name || this._id;
     }
 
-    public id() { 
-        return this._id; 
+    get componentIds() {
+        return Object.keys(this._components);
     }
 
-    public components() { 
-        return this._components; 
+    get components() {
+        return this._components;
     }
 
-    public componentTypes() {
-        return this._components.map(x => x.getInternalId());
+    get id() {
+        return this._id;
     }
 
-    public add = (component: Component) => {
-        return this.addComponents([component]);
+    get name() {
+        return this._name;
     }
 
-    public addComponents = (components?: Component[]) => {
-        if(!components) {
-            return this;
-        }
+    addComponents = (...components: Component[]) => {
+        const additionalComponents = components.reduce((dict, component) => {
+            dict[component.Id] = component;
+            return dict;
+        }, {} as { [id: string]: Component });
 
-        Array.prototype.push.apply(this._components, components);
+        // mutation
+        Object.assign(this._components, additionalComponents);
 
         return this;
     }
 
-    public getComponent = <T extends Component>(ctor : Ctor<T>) => {
-        var comp =  this._components
+    removeComponents = (...components: Component[]) => {
+        // mutation
+        components
+            .map(x => x.Id)
+            .forEach(id => delete this._components[id]);
+    }
+
+    getComponent = <T extends Component>(ctor: Ctor<T>) => {
+        const componentsArray = Object.keys(this._components).map(x => this._components[x]);
+
+        var comp = componentsArray
             .filter(x => x instanceof ctor)
             .map(x => <T>x);
-        
+
         return comp.length ? comp[0] : null;
     }
 }

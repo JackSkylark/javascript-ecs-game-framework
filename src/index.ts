@@ -1,51 +1,52 @@
 import Engine, { Scene, Components } from "~/engine";
-import InputManager from "~/engine/managers/InputManager";
-import {
-    Component,
-    Entity,
-    System,
-    Aspect
-} from "~/entity-component";
+import { Entity } from "~/entity-component";
 
-class CursorComponent extends Component {
-	
-}
 
-const cursorSystemAspect = new Aspect().all(Components.PositionComponent, Components.BoxComponent, CursorComponent);
-class CursorSystem extends System {
-    private _input: InputManager;
-
-    constructor(inputManager: InputManager) {
-        super(cursorSystemAspect);
-        this._input = inputManager;
-    }
-
-    processEntity(delta: number, entity: Entity) {
-        var position = entity.getComponent(Components.PositionComponent);
-        var box = entity.getComponent(Components.BoxComponent);
-        if (this._input.IsMouseOnCanvas) {
-            box.visible = true;
-            position.x = this._input.MouseLocation.x;
-            position.y = this._input.MouseLocation.y;
-        } else {
-            box.visible = false;
-        }
-    }
-}
+import { CursorSystem, BoxRenderingSystem } from "./systems";
+import { CursorComponent, PlayerComponent } from "./components";
+import { PlayerSystem } from "./systems/PlayerSystem";
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const game = new Engine(canvas);
-const cursorEntity = new Entity("cursor", [
-	new CursorComponent,
-    new Components.PositionComponent(0, 0),
-    new Components.BoxComponent(20)
-]);
-const boxEntity = new Entity("box1", [
-	new Components.PositionComponent(250, 500),
-    new Components.BoxComponent(50)
-]);
-const cursorSystem = new CursorSystem(game.input);
-const gameScene = new Scene().addEntities([cursorEntity, boxEntity]).addSystems([cursorSystem]);
 
-game.setScene(gameScene);
+// Instantiate Systems
+const cursorSystem = new CursorSystem(game.input);
+const playerSystem = new PlayerSystem(game.input);
+const renderSystem = new BoxRenderingSystem(canvas.getContext("2d"));
+
+
+// Instantiate Scene
+const scene = new Scene();
+scene.addSystems([
+    cursorSystem,
+    playerSystem,
+    renderSystem
+]);
+
+const cursorEntity = new Entity("cursor")
+cursorEntity.addComponents(
+    new CursorComponent,
+    new Components.PositionComponent(0, 0),
+    new Components.BoxComponent(20));
+
+const boxEntity = new Entity("box1");
+boxEntity.addComponents(
+    new Components.PositionComponent(250, 500),
+    new Components.BoxComponent(50)
+);
+
+const playerEntity = new Entity("player");
+playerEntity.addComponents(
+    new Components.PositionComponent(30, 50),
+    new Components.BoxComponent(10),
+    new PlayerComponent()
+);
+
+scene.addEntities([
+    cursorEntity,
+    boxEntity,
+    playerEntity
+]);
+
+game.setScene(scene);
 game.start();

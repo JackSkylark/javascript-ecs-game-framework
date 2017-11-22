@@ -1,5 +1,26 @@
 import { Vector2 } from "~/engine-math";
 
+class KeyboardManager {
+    private _pressed: {[keyCode: string]: number} = {};
+
+    constructor() {
+        window.addEventListener("keyup", this.onKeyUp, false);
+        window.addEventListener("keydown", this.onKeyDown, false);
+    }
+
+    isDown = (keyCode: string) => {
+        return !!this._pressed[keyCode];
+    }
+
+    private onKeyDown = (e: KeyboardEvent) => {
+        this._pressed[e.keyCode] = new Date().getTime();
+    }
+
+    private onKeyUp = (e: KeyboardEvent) => {
+        delete this._pressed[e.keyCode];
+    }
+}
+
 export default class InputManager {
     private _canvas: HTMLCanvasElement;
     
@@ -8,6 +29,7 @@ export default class InputManager {
         x: 0,
         y: 0
     };
+    Keyboard: KeyboardManager = new KeyboardManager();
 
     constructor(canvas: HTMLCanvasElement)
     {

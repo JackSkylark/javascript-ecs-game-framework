@@ -25,7 +25,7 @@ export class Aspect {
     }
 
     public isInAspect = (entity: Entity) => {
-        let components = entity.componentTypes();
+        let components = entity.componentIds;
         return this._all.every(id => components.indexOf(id) != -1)
             && this._none.every(id => components.indexOf(id) == -1)
             && (this._one.length === 0 || this._one.some(id => components.indexOf(id) != -1));

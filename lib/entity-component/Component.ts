@@ -6,8 +6,7 @@ abstract class Component
         this.__id = name || this.constructor.name;
     }
 
-    public getInternalId = () => 
-    {
+    public get Id() {
         return this.__id;
     }
 }

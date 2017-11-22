@@ -7,7 +7,6 @@ export abstract class System {
     constructor(aspect: Aspect) {
         this.aspect = aspect;
     }
-
     
     update(
         delta: number, 

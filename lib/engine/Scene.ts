@@ -34,26 +34,6 @@ class Scene {
     public update = (delta: number) => {
         this._systems.forEach(s => s.update(delta, this._entities));
     }
-
-    public render = (context: CanvasRenderingContext2D) => {
-        const entitiesToRenderAspect = new Aspect().all(PositionComponent).all(BoxComponent);
-        const entitiesToRender = this._entities.filter(x => entitiesToRenderAspect.isInAspect(x));
-
-        entitiesToRender.forEach(x => {
-            // todo: break out rendering logic
-            const position = x.getComponent(PositionComponent);
-            const box = x.getComponent(BoxComponent);
-
-            if (box.visible) {
-                context.fillRect(
-                    position.x - (box.size / 2), 
-                    position.y - (box.size / 2),
-                    box.size,
-                    box.size
-                );
-            }
-        });
-    }
 }
 
 export { Scene };

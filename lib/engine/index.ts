@@ -29,7 +29,6 @@ class GameEngine
         window.requestAnimationFrame(this.start);
         this.timer.tick();
         this.update(this.timer.deltaTime);
-        this.render();
     }
 
     setScene = (scene: Scene) => {
@@ -41,13 +40,9 @@ class GameEngine
             return;
         }
 
-        this._scene.update(delta);
-    }
-
-    private render = () => {
         this.clear();
         this._context.save();
-        this._scene.render(this._context);
+        this._scene.update(delta);
     }
 
     private clear = () => {
